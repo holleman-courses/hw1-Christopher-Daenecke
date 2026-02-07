@@ -100,17 +100,26 @@ def build_model50k():
     layers.Activation('relu'),
     layers.MaxPooling2D(pool_size=(2, 2)),
 
-    layers.SeparableConv2D(64, kernel_size=(3,3), padding="same", activation="relu"),
+    layers.Dropout(0.1),
+
+    layers.SeparableConv2D(64, kernel_size=(3,3), padding="same"),
     layers.BatchNormalization(),
     layers.Activation('relu'),
     layers.MaxPooling2D(pool_size=(2, 2)),
 
-    layers.SeparableConv2D(128, kernel_size=(3,3), padding="same", activation="relu"),
+    layers.SeparableConv2D(128, kernel_size=(3,3), padding="same"),
     layers.BatchNormalization(),
     layers.Activation('relu'),
     layers.MaxPooling2D(pool_size=(2, 2)),
 
-    layers.GlobalAveragePooling2D(),
+    layers.SeparableConv2D(128, kernel_size=(3,3), padding="same"),
+    layers.BatchNormalization(),
+    layers.Activation('relu'),
+    layers.MaxPooling2D(pool_size=(2, 2)),
+
+    layers.Dropout(0.25),
+
+    layers.Flatten(),
     layers.Dense(10)
   ]) 
 
@@ -146,6 +155,7 @@ if __name__ == '__main__':
 
   ########################################
   ## Build and train model 1
+  
   model1 = build_model1()
 
   history1 = model1.fit(
@@ -190,7 +200,7 @@ if __name__ == '__main__':
       target_size=(32,32)))
 
   test_img = test_img.astype("float32") / 255.0
-  test_img = test_img.expand_dims(test_img, axis=0)
+  test_img = np.expand_dims(test_img, axis=0)
 
   output_classes = ['airplane','automobile','bird','cat','deer','dog','frog','horse','ship','truck']
 
@@ -229,3 +239,4 @@ if __name__ == '__main__':
   )
 
   model50k.save("best_model.h5")
+  
